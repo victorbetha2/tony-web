@@ -133,7 +133,9 @@ export default function Home() {
                       Planificación financiera familiar
                     </li>
                   </ul>
-                  <Button className="w-full md:w-auto">Agendar sesión &rarr;</Button>
+                  <Link href="/contacto">
+                    <Button className="w-full md:w-auto">Agendar sesión &rarr;</Button>
+                  </Link>
                 </div>
               </AnimatedSection>
 

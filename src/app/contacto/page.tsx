@@ -30,7 +30,7 @@ export default function Contacto() {
                                 </div>
                                 <h3 className="font-heading font-semibold text-xl mb-2">Email</h3>
                                 <p className="text-muted mb-4">Escríbenos directamente a nuestro correo.</p>
-                                <a href="mailto:contacto@t2bteam.net" className="text-accent hover:text-accent-hover font-medium">contacto@t2bteam.net</a>
+                                <a href="mailto:info@t2bteam.net" className="text-accent hover:text-accent-hover font-medium">info@t2bteam.net</a>
                             </div>
 
                             <div className="p-6 bg-surface/30 rounded-2xl border border-surface/50 backdrop-blur-sm">

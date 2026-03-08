@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
         await resend.emails.send({
             from: 'T2B Team Web <noreply@t2bteam.net>',
-            to: process.env.CONTACT_EMAIL || "test@example.com",
+            to: process.env.CONTACT_EMAIL || "info@t2bteam.net",
             subject: `Nuevo contacto de ${name} - T2B Team`,
             html: `
         <h2>Nuevo mensaje de contacto</h2>

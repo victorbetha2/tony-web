@@ -55,8 +55,8 @@ export function Footer() {
                     <div>
                         <h3 className="font-heading font-semibold text-white mb-4">Contacto</h3>
                         <p className="text-muted text-sm mb-2">
-                            <a href="mailto:contacto@t2bteam.net" className="hover:text-white transition-colors">
-                                contacto@t2bteam.net
+                            <a href="mailto:info@t2bteam.net" className="hover:text-white transition-colors">
+                                info@t2bteam.net
                             </a>
                         </p>
                         <p className="text-muted text-sm mb-6">

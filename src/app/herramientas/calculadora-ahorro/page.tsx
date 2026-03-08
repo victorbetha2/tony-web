@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnimatedSection } from "@/components/ui/animated-section";
@@ -20,7 +20,16 @@ export default function CalculadoraAhorro() {
     contribVal: number;
     interestVal: number;
     avgVal: number;
-    annualRows: any[];
+    annualRows: Array<{
+      year: number;
+      yearStart: number;
+      contribYear: number;
+      interestYear: number;
+      endBal: number;
+      totalContrib: number;
+      totalInterest: number;
+      yieldPct: number;
+    }>;
     monthlyRate: number;
     tea: number;
   } | null>(null);
@@ -35,7 +44,7 @@ export default function CalculadoraAhorro() {
     return isFinite(n) ? (n * 100).toFixed(2) + "%" : "-";
   };
 
-  const calcProjection = () => {
+  const calcProjection = useCallback(() => {
     const P0 = parseFloat(initialAmount.toString() || "0");
     const PM = parseFloat(monthlySave.toString() || "0");
     const aRate = parseFloat(annualRate.toString() || "0") / 100;
@@ -98,7 +107,7 @@ export default function CalculadoraAhorro() {
       monthlyRate: mRate,
       tea: tea
     });
-  };
+  }, [initialAmount, monthlySave, annualRate, years, contribMoment]);
 
   const clearAll = () => {
     setInitialAmount(10000);
@@ -131,7 +140,7 @@ export default function CalculadoraAhorro() {
 
   useEffect(() => {
     calcProjection();
-  }, []); // Run once on mount
+  }, [calcProjection]); // Fixed missing dependency
 
   return (
     <>

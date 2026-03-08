@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnimatedSection } from "@/components/ui/animated-section";
@@ -60,10 +60,19 @@ export default function CalculadoraPrestamos() {
     totalInt: number;
     tea: number;
     monthlyRate: number;
-    rows: any[];
+    rows: Array<{
+      num: number;
+      date: string;
+      start: number;
+      pay: number;
+      interest: number;
+      principal: number;
+      end: number;
+      notes: string;
+    }>;
   } | null>(null);
 
-  const calc = () => {
+  const calc = useCallback(() => {
     const principal = parseFloat(amount.toString() || "0");
     const n = parseInt(months.toString() || "0", 10);
     const ar = parseFloat(annualRate.toString() || "0") / 100;
@@ -109,7 +118,7 @@ export default function CalculadoraPrestamos() {
       monthlyRate: mr,
       rows
     });
-  };
+  }, [amount, months, annualRate, startDate, loanType]);
 
   const clearAll = () => {
     setLoanType("Préstamo Personal");
@@ -152,7 +161,7 @@ export default function CalculadoraPrestamos() {
 
   useEffect(() => {
     calc();
-  }, []);
+  }, [calc]);
 
   return (
     <>

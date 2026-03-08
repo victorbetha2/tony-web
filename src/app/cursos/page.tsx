@@ -1,9 +1,8 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { AnimatedSection } from "@/components/ui/animated-section";
-import { PiggyBank, Receipt, TrendingUp, Briefcase, GraduationCap, Building2, ArrowRight } from "lucide-react";
+import { PiggyBank, Receipt, TrendingUp, Briefcase, GraduationCap, Building2 } from "lucide-react";
 
 export const metadata = {
     title: "Cursos | T2B Team",

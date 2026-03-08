@@ -3,9 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Wrench, Mic, Book, User, Sun, Menu, X } from "lucide-react";
+import { Wrench, Mic, Book, User, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 const navLinks = [
     { href: "/herramientas", label: "Herramientas", icon: Wrench },

@@ -2,7 +2,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Button } from "@/components/ui/button";
 import { AnimatedSection } from "@/components/ui/animated-section";
-import { PlayCircle, Mic } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 
 export const metadata = {
     title: "Podcast | T2B Team",

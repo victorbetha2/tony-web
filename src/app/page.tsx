@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { ContactForm } from "@/components/forms/contact-form";
@@ -9,7 +9,7 @@ import { Footer } from "@/components/layout/footer";
 import {
   User, Users, LineChart,
   PiggyBank, Receipt, TrendingUp, Calculator,
-  Mic, PlayCircle, ArrowRight
+  ArrowRight
 } from "lucide-react";
 
 export default function Home() {

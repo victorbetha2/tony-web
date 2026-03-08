@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
         const { name, email, phone, message } = await req.json();
 
         await resend.emails.send({
-            from: 'T2B Team Web <noreply@t2bteam.net>',
+            from: 'T2B Team Web <noreply@uniklabs.tech>',
             to: process.env.CONTACT_EMAIL || "info@t2bteam.net",
             subject: `Nuevo contacto de ${name} - T2B Team`,
             html: `
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
         // Send confirmation to the user
         await resend.emails.send({
-            from: 'T2B Team <noreply@t2bteam.net>',
+            from: 'T2B Team <noreply@uniklabs.tech>',
             to: email,
             subject: 'Recibimos tu mensaje - T2B Team',
             html: `

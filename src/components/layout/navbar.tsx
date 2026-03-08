@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, GraduationCap, Mic, Book, User, Sun, Menu, X } from "lucide-react";
+import { Home, Wrench, Mic, Book, User, Sun, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const navLinks = [
-    { href: "/cursos", label: "Cursos", icon: GraduationCap },
+    { href: "/herramientas", label: "Herramientas", icon: Wrench },
     { href: "/podcast", label: "Podcast", icon: Mic },
     { href: "/blog", label: "Blog", icon: Book },
     { href: "/contacto", label: "Contacto", icon: User },

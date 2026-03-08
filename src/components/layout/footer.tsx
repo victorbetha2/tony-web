@@ -41,7 +41,7 @@ export function Footer() {
                                 <Link href="/" className="text-muted hover:text-white transition-colors">Inicio</Link>
                             </li>
                             <li>
-                                <Link href="/cursos" className="text-muted hover:text-white transition-colors">Cursos</Link>
+                                <Link href="/herramientas" className="text-muted hover:text-white transition-colors">Herramientas</Link>
                             </li>
                             <li>
                                 <Link href="/podcast" className="text-muted hover:text-white transition-colors">Podcast</Link>

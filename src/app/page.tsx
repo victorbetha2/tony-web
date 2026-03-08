@@ -32,9 +32,9 @@ export default function Home() {
                 Educación financiera, emprendimiento y mentalidad para crear una vida con propósito. Aprende a administrar, invertir y multiplicar tu dinero.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/cursos">
+                <Link href="/herramientas">
                   <Button size="lg" className="w-full sm:w-auto">
-                    Ver Cursos
+                    Ver Herramientas
                   </Button>
                 </Link>
                 <Link href="#contacto">
@@ -220,24 +220,29 @@ export default function Home() {
                     {
                       title: "Calculadora de Préstamos",
                       desc: "Esta calculadora permite establecer el valor que va a tener la cuota de un crédito, tomando el monto a tomar prestado, la tasa de interés y el plazo.",
-                      icon: Calculator
+                      icon: Calculator,
+                      link: "/herramientas/calculadora-prestamos"
                     },
                     {
                       title: "Calculadora de Ahorro",
                       desc: "Esta calculadora permite establecer el valor de tus ahorros en el tiempo.",
-                      icon: PiggyBank
+                      icon: PiggyBank,
+                      link: "/herramientas/calculadora-ahorro"
                     },
                   ].map((tool, i) => (
-                    <Card key={i} className="hover:-translate-y-1 hover:border-accent/40 cursor-pointer h-full">
-                      <CardHeader className="p-5">
-                        <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center mb-3">
-                          <tool.icon size={20} className="text-accent" />
-                        </div>
-                        <CardTitle className="text-lg">{tool.title}</CardTitle>
-                        <CardDescription className="text-sm leading-relaxed">{tool.desc}</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  ))}
+                    <Link href={tool.link} key={i}>
+                      <Card className="hover:-translate-y-1 hover:border-accent/40 cursor-pointer h-full">
+                        <CardHeader className="p-5">
+                          <div className="w-10 h-10 rounded-lg bg-surface flex items-center justify-center mb-3">
+                            <tool.icon size={20} className="text-accent" />
+                          </div>
+                          <CardTitle className="text-lg">{tool.title}</CardTitle>
+                          <CardDescription className="text-sm leading-relaxed">{tool.desc}</CardDescription>
+                        </CardHeader>
+                      </Card>
+                    </Link>
+                  ))
+                  }
                 </div>
               </AnimatedSection>
 

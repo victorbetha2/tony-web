@@ -309,7 +309,9 @@ export default function Home() {
                 <p className="text-muted text-lg mb-8 max-w-md">
                   Ayudando a miles de personas a entender su dinero, crear negocios escalables y vivir con propósito.
                 </p>
-                <Button size="lg">Conócenos</Button>
+                <Link href="/contacto">
+                  <Button size="lg">Conócenos</Button>
+                </Link>
               </AnimatedSection>
               <AnimatedSection delay={0.2} className="md:w-1/2 w-full flex justify-center md:justify-end">
                 <div className="w-full max-w-sm aspect-square bg-gradient-to-tr from-surface to-accent/20 rounded-2xl overflow-hidden relative shadow-2xl">

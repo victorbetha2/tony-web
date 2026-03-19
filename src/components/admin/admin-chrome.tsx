@@ -14,11 +14,14 @@ const nav = [
   { href: "/admin/contacts", label: "Contactos", icon: Mail },
 ];
 
-export function AdminChrome({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const [open, setOpen] = useState(false);
-
-  const NavLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
+function AdminNavLinks({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+}) {
+  return (
     <nav className="flex flex-col gap-1 p-4">
       {nav.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
@@ -41,6 +44,11 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
       })}
     </nav>
   );
+}
+
+export function AdminChrome({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#0B0B0B] text-white flex">
@@ -58,7 +66,7 @@ export function AdminChrome({ children }: { children: React.ReactNode }) {
               <p className="text-xs text-[#9CA3AF]">Admin</p>
             </div>
           </div>
-          <NavLinks onNavigate={() => setOpen(false)} />
+          <AdminNavLinks pathname={pathname} onNavigate={() => setOpen(false)} />
           <div className="mt-auto border-t border-white/10 p-4">
             <Button
               type="button"

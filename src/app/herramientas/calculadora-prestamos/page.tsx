@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnimatedSection } from "@/components/ui/animated-section";
@@ -45,6 +45,74 @@ function toDisplayDate(d: Date) {
   return pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + "/" + d.getFullYear();
 }
 
+type LoanResults = {
+  payment: number;
+  totalPaid: number;
+  totalInt: number;
+  tea: number;
+  monthlyRate: number;
+  rows: Array<{
+    num: number;
+    date: string;
+    start: number;
+    pay: number;
+    interest: number;
+    principal: number;
+    end: number;
+    notes: string;
+  }>;
+};
+
+function computeLoanAmortization(
+  amount: number,
+  months: number,
+  annualRate: number,
+  startDate: string
+): LoanResults | null {
+  const principal = parseFloat(amount.toString() || "0");
+  const n = parseInt(months.toString() || "0", 10);
+  const ar = parseFloat(annualRate.toString() || "0") / 100;
+  const mr = ar / 12;
+
+  if (!(principal > 0) || !(n > 0) || !(ar >= 0)) return null;
+
+  const tea = Math.pow(1 + mr, 12) - 1;
+  const payment = pmt(mr, n, principal);
+  const totalPaid = payment * n;
+  const totalInt = totalPaid - principal;
+
+  const baseDate = startDate ? new Date(startDate + "T00:00:00") : new Date();
+  let balance = principal;
+  const rows = [];
+  for (let i = 1; i <= n; i++) {
+    const dt = addMonths(baseDate, i - 1);
+    const interest = balance * mr;
+    let principalPay = payment - interest;
+    if (principalPay > balance) principalPay = balance;
+    const endBal = Math.max(0, balance - principalPay);
+    rows.push({
+      num: i,
+      date: toDisplayDate(dt),
+      start: balance,
+      pay: payment,
+      interest: interest,
+      principal: principalPay,
+      end: endBal,
+      notes: "",
+    });
+    balance = endBal;
+  }
+
+  return {
+    payment,
+    totalPaid,
+    totalInt,
+    tea,
+    monthlyRate: mr,
+    rows,
+  };
+}
+
 export default function CalculadoraPrestamos() {
   const [loanType, setLoanType] = useState("Préstamo Personal");
   const [annualRate, setAnnualRate] = useState(19);
@@ -54,71 +122,19 @@ export default function CalculadoraPrestamos() {
   const [showSchedule, setShowSchedule] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
 
-  const [results, setResults] = useState<{
-    payment: number;
-    totalPaid: number;
-    totalInt: number;
-    tea: number;
-    monthlyRate: number;
-    rows: Array<{
-      num: number;
-      date: string;
-      start: number;
-      pay: number;
-      interest: number;
-      principal: number;
-      end: number;
-      notes: string;
-    }>;
-  } | null>(null);
+  const results = useMemo(
+    () => computeLoanAmortization(amount, months, annualRate, startDate),
+    [amount, months, annualRate, startDate]
+  );
 
-  const calc = useCallback(() => {
+  const notifyIfInvalidLoanInput = () => {
     const principal = parseFloat(amount.toString() || "0");
     const n = parseInt(months.toString() || "0", 10);
     const ar = parseFloat(annualRate.toString() || "0") / 100;
-    const mr = ar / 12;
-
     if (!(principal > 0) || !(n > 0) || !(ar >= 0)) {
       alert("Revisa los datos: monto y plazo deben ser mayores que 0.");
-      return;
     }
-
-    const tea = Math.pow(1 + mr, 12) - 1;
-    const payment = pmt(mr, n, principal);
-    const totalPaid = payment * n;
-    const totalInt = totalPaid - principal;
-
-    const baseDate = startDate ? new Date(startDate + "T00:00:00") : new Date();
-    let balance = principal;
-    const rows = [];
-    for (let i = 1; i <= n; i++) {
-      const dt = addMonths(baseDate, i - 1);
-      const interest = balance * mr;
-      let principalPay = payment - interest;
-      if (principalPay > balance) principalPay = balance;
-      const endBal = Math.max(0, balance - principalPay);
-      rows.push({
-        num: i,
-        date: toDisplayDate(dt),
-        start: balance,
-        pay: payment,
-        interest: interest,
-        principal: principalPay,
-        end: endBal,
-        notes: ""
-      });
-      balance = endBal;
-    }
-
-    setResults({
-      payment,
-      totalPaid,
-      totalInt,
-      tea,
-      monthlyRate: mr,
-      rows
-    });
-  }, [amount, months, annualRate, startDate, loanType]);
+  };
 
   const clearAll = () => {
     setLoanType("Préstamo Personal");
@@ -126,7 +142,6 @@ export default function CalculadoraPrestamos() {
     setAmount(100000);
     setMonths(36);
     setStartDate(toISODate(new Date()));
-    setResults(null);
     setShowSchedule(false);
   };
 
@@ -158,10 +173,6 @@ export default function CalculadoraPrestamos() {
     a.remove();
     URL.revokeObjectURL(url);
   };
-
-  useEffect(() => {
-    calc();
-  }, [calc]);
 
   return (
     <>
@@ -595,7 +606,7 @@ export default function CalculadoraPrestamos() {
 
                       <div className="btns">
                         <button className="btn" onClick={clearAll}>Limpiar</button>
-                        <button className="btn primary" onClick={calc}>Calcular</button>
+                        <button className="btn primary" onClick={notifyIfInvalidLoanInput}>Calcular</button>
                         <button className="btn teal" onClick={() => setShowSchedule(!showSchedule)}>
                           {showSchedule ? "Ocultar calendario" : "Ver calendario"}
                         </button>

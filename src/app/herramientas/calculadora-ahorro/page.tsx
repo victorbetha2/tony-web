@@ -1,10 +1,97 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { Moon, Sun } from "lucide-react";
+
+type SavingsResults = {
+  finalVal: number;
+  contribVal: number;
+  interestVal: number;
+  avgVal: number;
+  annualRows: Array<{
+    year: number;
+    yearStart: number;
+    contribYear: number;
+    interestYear: number;
+    endBal: number;
+    totalContrib: number;
+    totalInterest: number;
+    yieldPct: number;
+  }>;
+  monthlyRate: number;
+  tea: number;
+};
+
+function computeSavingsProjection(
+  initialAmount: number,
+  monthlySave: number,
+  annualRate: number,
+  years: number,
+  contribMoment: string
+): SavingsResults | null {
+  const P0 = parseFloat(initialAmount.toString() || "0");
+  const PM = parseFloat(monthlySave.toString() || "0");
+  const aRate = parseFloat(annualRate.toString() || "0") / 100;
+  const yrs = parseInt(years.toString() || "0", 10);
+  const mRate = aRate / 12;
+  const begin = contribMoment === "begin";
+
+  if (P0 < 0 || PM < 0 || yrs <= 0) return null;
+
+  const tea = Math.pow(1 + mRate, 12) - 1;
+
+  let balance = P0;
+  let totalContrib = P0;
+  let totalInterest = 0;
+  const annualRows = [];
+
+  for (let y = 1; y <= yrs; y++) {
+    const yearStart = balance;
+    let contribYear = 0;
+    let interestYear = 0;
+
+    for (let m = 1; m <= 12; m++) {
+      if (begin && PM > 0) {
+        balance += PM;
+        contribYear += PM;
+        totalContrib += PM;
+      }
+      const interest = balance * mRate;
+      balance += interest;
+      interestYear += interest;
+      totalInterest += interest;
+      if (!begin && PM > 0) {
+        balance += PM;
+        contribYear += PM;
+        totalContrib += PM;
+      }
+    }
+
+    annualRows.push({
+      year: y,
+      yearStart: yearStart,
+      contribYear: contribYear,
+      interestYear: interestYear,
+      endBal: balance,
+      totalContrib: totalContrib,
+      totalInterest: totalInterest,
+      yieldPct: totalContrib > 0 ? totalInterest / totalContrib : 0,
+    });
+  }
+
+  return {
+    finalVal: balance,
+    contribVal: totalContrib,
+    interestVal: totalInterest,
+    avgVal: balance / yrs,
+    annualRows,
+    monthlyRate: mRate,
+    tea: tea,
+  };
+}
 
 export default function CalculadoraAhorro() {
   const [initialAmount, setInitialAmount] = useState(10000);
@@ -15,24 +102,17 @@ export default function CalculadoraAhorro() {
   const [currency, setCurrency] = useState("HNL");
   const [isDarkMode, setIsDarkMode] = useState(true);
 
-  const [results, setResults] = useState<{
-    finalVal: number;
-    contribVal: number;
-    interestVal: number;
-    avgVal: number;
-    annualRows: Array<{
-      year: number;
-      yearStart: number;
-      contribYear: number;
-      interestYear: number;
-      endBal: number;
-      totalContrib: number;
-      totalInterest: number;
-      yieldPct: number;
-    }>;
-    monthlyRate: number;
-    tea: number;
-  } | null>(null);
+  const results = useMemo(
+    () =>
+      computeSavingsProjection(
+        initialAmount,
+        monthlySave,
+        annualRate,
+        years,
+        contribMoment
+      ),
+    [initialAmount, monthlySave, annualRate, years, contribMoment]
+  );
 
   const moneyFmt = (n: number) => {
     if (!isFinite(n)) return "-";
@@ -44,70 +124,14 @@ export default function CalculadoraAhorro() {
     return isFinite(n) ? (n * 100).toFixed(2) + "%" : "-";
   };
 
-  const calcProjection = useCallback(() => {
+  const notifyIfInvalidSavingsInput = () => {
     const P0 = parseFloat(initialAmount.toString() || "0");
     const PM = parseFloat(monthlySave.toString() || "0");
-    const aRate = parseFloat(annualRate.toString() || "0") / 100;
     const yrs = parseInt(years.toString() || "0", 10);
-    const mRate = aRate / 12;
-    const begin = contribMoment === "begin";
-
     if (P0 < 0 || PM < 0 || yrs <= 0) {
       alert("Revisa los datos: tiempo debe ser mayor que 0 y montos no negativos.");
-      return;
     }
-
-    const tea = Math.pow(1 + mRate, 12) - 1;
-
-    let balance = P0;
-    let totalContrib = P0;
-    let totalInterest = 0;
-    const annualRows = [];
-
-    for (let y = 1; y <= yrs; y++) {
-      const yearStart = balance;
-      let contribYear = 0;
-      let interestYear = 0;
-
-      for (let m = 1; m <= 12; m++) {
-        if (begin && PM > 0) {
-          balance += PM;
-          contribYear += PM;
-          totalContrib += PM;
-        }
-        const interest = balance * mRate;
-        balance += interest;
-        interestYear += interest;
-        totalInterest += interest;
-        if (!begin && PM > 0) {
-          balance += PM;
-          contribYear += PM;
-          totalContrib += PM;
-        }
-      }
-
-      annualRows.push({
-        year: y,
-        yearStart: yearStart,
-        contribYear: contribYear,
-        interestYear: interestYear,
-        endBal: balance,
-        totalContrib: totalContrib,
-        totalInterest: totalInterest,
-        yieldPct: totalContrib > 0 ? totalInterest / totalContrib : 0
-      });
-    }
-
-    setResults({
-      finalVal: balance,
-      contribVal: totalContrib,
-      interestVal: totalInterest,
-      avgVal: balance / yrs,
-      annualRows,
-      monthlyRate: mRate,
-      tea: tea
-    });
-  }, [initialAmount, monthlySave, annualRate, years, contribMoment]);
+  };
 
   const clearAll = () => {
     setInitialAmount(10000);
@@ -116,7 +140,6 @@ export default function CalculadoraAhorro() {
     setYears(10);
     setContribMoment("end");
     setCurrency("HNL");
-    setResults(null);
   };
 
   const downloadCSV = () => {
@@ -137,10 +160,6 @@ export default function CalculadoraAhorro() {
     a.remove();
     URL.revokeObjectURL(url);
   };
-
-  useEffect(() => {
-    calcProjection();
-  }, [calcProjection]); // Fixed missing dependency
 
   return (
     <>
@@ -588,7 +607,7 @@ export default function CalculadoraAhorro() {
                       </div>
                       <div className="btns">
                         <button className="btn" onClick={clearAll}>Limpiar</button>
-                        <button className="btn primary" onClick={calcProjection}>Calcular</button>
+                        <button className="btn primary" onClick={notifyIfInvalidSavingsInput}>Calcular</button>
                         <button className="btn teal" onClick={downloadCSV} disabled={!results}>Descargar tabla (CSV)</button>
                         <button className="btn" onClick={() => window.print()} disabled={!results}>Imprimir / PDF</button>
                       </div>

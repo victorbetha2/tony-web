@@ -11,8 +11,10 @@ export const metadata = {
     description: "Artículos sobre finanzas, negocios y mentalidad.",
 };
 
-export default function Blog() {
-    const posts = getAllPosts();
+export const dynamic = "force-dynamic";
+
+export default async function Blog() {
+    const posts = await getAllPosts();
 
     return (
         <>

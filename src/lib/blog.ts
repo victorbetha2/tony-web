@@ -1,54 +1,58 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
-
-const blogDirectory = path.join(process.cwd(), "src/content/blog");
+import { db } from "@/db";
+import { blogPosts } from "@/db/schema";
+import { and, desc, eq } from "drizzle-orm";
+import type { InferSelectModel } from "drizzle-orm";
 
 export interface BlogPost {
-    slug: string;
-    title: string;
-    excerpt: string;
-    date: string;
-    category: string;
-    content: string;
-    image?: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  date: string;
+  category: string;
+  content: string;
+  image?: string;
 }
 
-export function getBlogSlugs() {
-    if (!fs.existsSync(blogDirectory)) {
-        return [];
-    }
-    return fs.readdirSync(blogDirectory).filter(file => file.endsWith(".mdx"));
+function rowToBlogPost(p: InferSelectModel<typeof blogPosts>): BlogPost {
+  const dateSrc = p.publishedAt ?? p.createdAt;
+  return {
+    slug: p.slug,
+    title: p.title,
+    excerpt: p.excerpt || "",
+    date: dateSrc.toISOString().split("T")[0],
+    category: p.category,
+    content: p.content,
+    image: p.image || undefined,
+  };
 }
 
-export function getPostBySlug(slug: string): BlogPost {
-    const realSlug = slug.replace(/\.mdx$/, "");
-    const fullPath = path.join(blogDirectory, `${realSlug}.mdx`);
-    const fileContents = fs.readFileSync(fullPath, "utf8");
-    const { data, content } = matter(fileContents);
+export async function getAllPosts(): Promise<BlogPost[]> {
+  const posts = await db
+    .select()
+    .from(blogPosts)
+    .where(eq(blogPosts.status, "published"))
+    .orderBy(desc(blogPosts.publishedAt));
 
-    return {
-        slug: realSlug,
-        title: data.title as string,
-        excerpt: data.excerpt as string,
-        date: data.date as string,
-        category: data.category as string,
-        image: data.image as string || undefined,
-        content,
-    };
+  return posts.map(rowToBlogPost);
 }
 
-export function getAllPosts(): BlogPost[] {
-    const slugs = getBlogSlugs();
-    const posts = slugs
-        .map((slug) => getPostBySlug(slug))
-        // sort posts by date in descending order
-        .sort((post1, post2) => (post1.date > post2.date ? -1 : 1));
-    return posts;
+export async function getPostBySlug(slug: string): Promise<BlogPost> {
+  const [post] = await db
+    .select()
+    .from(blogPosts)
+    .where(
+      and(eq(blogPosts.slug, slug), eq(blogPosts.status, "published"))
+    )
+    .limit(1);
+
+  if (!post) {
+    throw new Error(`Post not found: ${slug}`);
+  }
+
+  return rowToBlogPost(post);
 }
 
-export function getCategories(): string[] {
-    const posts = getAllPosts();
-    const categories = new Set(posts.map(post => post.category));
-    return Array.from(categories);
+export async function getCategories(): Promise<string[]> {
+  const posts = await getAllPosts();
+  return Array.from(new Set(posts.map((p) => p.category)));
 }

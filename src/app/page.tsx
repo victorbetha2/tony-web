@@ -37,7 +37,7 @@ export default function Home() {
                     Ver Herramientas
                   </Button>
                 </Link>
-                <Link href="#contacto">
+                <Link href="/quiero-informacion">
                   <Button size="lg" variant="outline" className="w-full sm:w-auto">
                     Contáctenos
                   </Button>
@@ -133,7 +133,7 @@ export default function Home() {
                       Planificación financiera familiar
                     </li>
                   </ul>
-                  <Link href="/contacto">
+                  <Link href="/quiero-informacion">
                     <Button className="w-full md:w-auto">Agendar sesión &rarr;</Button>
                   </Link>
                 </div>
@@ -314,7 +314,7 @@ export default function Home() {
                 <p className="text-muted text-lg mb-8 max-w-md">
                   Ayudando a miles de personas a entender su dinero, crear negocios escalables y vivir con propósito.
                 </p>
-                <Link href="/contacto">
+                <Link href="/quiero-informacion">
                   <Button size="lg">Conócenos</Button>
                 </Link>
               </AnimatedSection>

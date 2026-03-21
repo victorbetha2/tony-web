@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
+import { RecaptchaProvider } from "@/components/providers/recaptcha-provider";
 import "./globals.css";
 
 const inter = Inter({
@@ -30,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${montserrat.variable}`}>
       <body className="antialiased font-sans bg-background text-foreground min-h-screen flex flex-col">
-        {children}
+        <RecaptchaProvider>{children}</RecaptchaProvider>
       </body>
     </html>
   );

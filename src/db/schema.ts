@@ -5,6 +5,7 @@ import {
   varchar,
   timestamp,
   boolean,
+  doublePrecision,
 } from "drizzle-orm/pg-core";
 
 export const contactSubmissions = pgTable("contact_submissions", {
@@ -37,4 +38,20 @@ export const adminUsers = pgTable("admin_users", {
   passwordHash: varchar("password_hash", { length: 255 }).notNull(),
   name: varchar("name", { length: 255 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const leads = pgTable("leads", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  nombre: varchar("nombre", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  telefono: varchar("telefono", { length: 50 }).notNull(),
+  pais: varchar("pais", { length: 120 }).notNull(),
+  areaInteres: text("area_interes").notNull(),
+  etapaActual: text("etapa_actual").notNull(),
+  comoConocio: text("como_conocio"),
+  nombreEvento: text("nombre_evento"),
+  mensaje: text("mensaje"),
+  ipAddress: varchar("ip_address", { length: 45 }),
+  recaptchaScore: doublePrecision("recaptcha_score"),
 });

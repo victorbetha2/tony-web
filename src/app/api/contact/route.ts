@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { contactSubmissions } from "@/db/schema";
 import { contactPayloadSchema } from "@/lib/contact-schema";
+import { verifyRecaptchaToken } from "@/lib/recaptcha";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
 
@@ -17,7 +18,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, phone, message } = parsed.data;
+    const { name, email, phone, message, recaptchaToken } = parsed.data;
+
+    const captcha = await verifyRecaptchaToken(recaptchaToken);
+    if (!captcha.success) {
+      return NextResponse.json(
+        {
+          error:
+            "Verificación de seguridad fallida. Intente de nuevo.",
+        },
+        { status: 400 }
+      );
+    }
 
     await db.insert(contactSubmissions).values({
       name,

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { Menu, LogOut, LayoutDashboard, BookOpen, Mail } from "lucide-react";
+import { Menu, LogOut, LayoutDashboard, BookOpen, Mail, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ const nav = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/blogs", label: "Blogs", icon: BookOpen },
   { href: "/admin/contacts", label: "Contactos", icon: Mail },
+  { href: "/admin/leads", label: "Leads (eventos)", icon: UserPlus },
 ];
 
 function AdminNavLinks({

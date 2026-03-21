@@ -26,6 +26,7 @@
     "next-auth": "^5.0.0-beta.30",
     "react": "^18",
     "react-dom": "^18",
+    "react-google-recaptcha-v3": "^1.11.0",
     "react-hook-form": "^7.71.2",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
